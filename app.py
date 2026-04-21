@@ -562,21 +562,16 @@ def render_finish(results_dir: str):
 
 def render_sidebar():
     st.sidebar.title("实验设置")
-    uploaded_file = st.sidebar.file_uploader("上传修订版题库 xlsx", type=["xlsx"])
-    workbook_path = st.sidebar.text_input("或填写本地题库路径", value="")
-    dataset_root = st.sidebar.text_input(
-        "图片根目录（MVTec_AD_Thesis 或 00_raw）",
-        value="",
-        help="例如：D:/.../MVTec_AD_Thesis 或 D:/.../MVTec_AD_Thesis/00_raw",
-    )
-    results_dir = st.sidebar.text_input("结果保存目录", value=RESULTS_DIR_DEFAULT)
+    uploaded_file = None          # 公网部署：题库由服务器直接读取
+    workbook_path = "05_metadata/MVTec_实验题库_完整版_解释优化版.xlsx"
+    dataset_root = "00_raw"
+    results_dir = RESULTS_DIR_DEFAULT
     st.sidebar.markdown("---")
     st.session_state["show_debug"] = st.sidebar.checkbox("显示调试信息（题号/图片ID/路径/解释模式）", value=False)
     if st.session_state.get("exp_meta"):
         with st.sidebar.expander("当前会话信息", expanded=False):
             st.write(st.session_state["exp_meta"])
             st.write(st.session_state["participant_meta"])
-    st.sidebar.caption("建议本地运行 Streamlit，以便直接读取你的图片路径。")
     if st.sidebar.button("重置当前会话"):
         reset_experiment()
         st.rerun()
@@ -597,7 +592,6 @@ def validate_ready(df: pd.DataFrame, dataset_root: str):
         st.error(f"题库缺少必要列：{missing}")
         return False
     if not dataset_root:
-        st.warning("请先在左侧填写图片根目录。")
         return False
     return True
 
