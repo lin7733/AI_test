@@ -19,10 +19,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+BASE_DIR = Path(__file__).resolve().parent
+WORKBOOK_FILENAME = "AI_质检实验题库_实验一实验二_多目标采购版.xlsx"
+DATASET_ROOT = BASE_DIR / "00_raw"
+RESULTS_DIR_DEFAULT = BASE_DIR / "results"
+
 APP_TITLE = "AI辅助质检实验平台"
-WORKBOOK_PATH = r"D:/学习资料/大四/毕业论文/MVTec_AD_Thesis/streamlit_mvtec_experiment/05_metadata/AI_质检实验题库_实验一实验二_多目标采购版.xlsx"
-DATASET_ROOT = "00_raw"
-RESULTS_DIR_DEFAULT = "results"
 BREAK_AFTER = 24
 OUTPUT_XLSX_NAME = "experiment_data.xlsx"
 
@@ -107,8 +109,28 @@ def normalize_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def find_workbook_path() -> str:
-    return WORKBOOK_PATH
+def find_workbook_path() -> Path:
+    candidates = [
+        BASE_DIR / "05_metadata" / WORKBOOK_FILENAME,
+        BASE_DIR / WORKBOOK_FILENAME,
+    ]
+    for p in candidates:
+        if p.exists() and p.is_file():
+            return p
+
+    metadata_dir = BASE_DIR / "05_metadata"
+    if metadata_dir.exists():
+        dir_listing = "\n".join(sorted(x.name for x in metadata_dir.iterdir()))
+    else:
+        dir_listing = "<05_metadata 文件夹不存在>"
+
+    searched = "\n".join(str(p) for p in candidates)
+    raise FileNotFoundError(
+        "未找到题库文件。\n已搜索路径：\n"
+        f"{searched}\n\n"
+        "05_metadata 目录内容：\n"
+        f"{dir_listing}"
+    )
 
 
 def read_structured_sheet(workbook_path: str, sheet_name: str) -> pd.DataFrame:
@@ -1137,7 +1159,7 @@ def validate_ready(exp1_df: pd.DataFrame, exp2_df: pd.DataFrame, practice_df: pd
     if exp1_df.empty or exp2_df.empty or practice_df.empty:
         st.warning("题库未成功加载完整，请先检查工作簿路径和 sheet 结构。")
         return False
-    if not Path(DATASET_ROOT).exists():
+    if not DATASET_ROOT.exists():
         st.warning(f"当前图片根目录不存在：{DATASET_ROOT}。如果图片不显示，请优先检查该路径。")
     return True
 
