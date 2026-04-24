@@ -20,7 +20,7 @@ st.set_page_config(
 )
 
 APP_TITLE = "AI辅助质检实验平台"
-WORKBOOK_PATH = r"D:\学习资料\大四\毕业论文\MVTec_AD_Thesis\streamlit_mvtec_experiment\05_metadata\AI_质检实验题库_实验一实验二_多目标采购版.xlsx"
+WORKBOOK_PATH = r"D:/学习资料/大四/毕业论文/MVTec_AD_Thesis/streamlit_mvtec_experiment/05_metadata/AI_质检实验题库_实验一实验二_多目标采购版.xlsx"
 DATASET_ROOT = "00_raw"
 RESULTS_DIR_DEFAULT = "results"
 BREAK_AFTER = 24
